@@ -8,7 +8,7 @@
            state: present
 
        - name: Check command with lenting
-         command: "/bin/echo just testing"
+          command: "/bin/echo just testing"
 
 
 
