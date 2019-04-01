@@ -1,0 +1,5 @@
+---
+- name: Test kitchen
+  hosts: all
+  roles:
+      - test-kitchen-role
