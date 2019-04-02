@@ -1,0 +1,20 @@
+I, [2019-04-02T07:27:26.797123 #13429]  INFO -- default-ubuntu-1804: -----> Setting up <default-ubuntu-1804>...
+I, [2019-04-02T07:27:26.798888 #13429]  INFO -- default-ubuntu-1804: Finished setting up <default-ubuntu-1804> (0m0.00s).
+I, [2019-04-02T07:27:26.799051 #13429]  INFO -- default-ubuntu-1804: -----> Verifying <default-ubuntu-1804>...
+I, [2019-04-02T07:27:26.799649 #13429]  INFO -- default-ubuntu-1804: Preparing files for transfer
+I, [2019-04-02T07:27:27.079231 #13429]  INFO -- default-ubuntu-1804: -----> Busser installation detected (busser)
+I, [2019-04-02T07:27:27.079812 #13429]  INFO -- default-ubuntu-1804: Installing Busser plugins: busser-serverspec
+I, [2019-04-02T07:27:27.712956 #13429]  INFO -- default-ubuntu-1804: Plugin serverspec already installed
+I, [2019-04-02T07:27:27.979888 #13429]  INFO -- default-ubuntu-1804: Removing /tmp/verifier/suites/serverspec
+I, [2019-04-02T07:27:27.984443 #13429]  INFO -- default-ubuntu-1804: Transferring files to <default-ubuntu-1804>
+I, [2019-04-02T07:27:28.332559 #13429]  INFO -- default-ubuntu-1804: -----> Running serverspec test suite
+I, [2019-04-02T07:27:28.437109 #13429]  INFO -- default-ubuntu-1804: /usr/bin/ruby2.5 -I/tmp/verifier/suites/serverspec -I/tmp/verifier/gems/gems/rspec-support-3.8.0/lib:/tmp/verifier/gems/gems/rspec-core-3.8.0/lib /tmp/verifier/gems/bin/rspec --pattern /tmp/verifier/suites/serverspec/\*\*/\*_spec.rb --color --format documentation --default-path /tmp/verifier/suites/serverspec
+I, [2019-04-02T07:27:28.856355 #13429]  INFO -- default-ubuntu-1804: 
+I, [2019-04-02T07:27:28.856821 #13429]  INFO -- default-ubuntu-1804: Nginx Daemon
+I, [2019-04-02T07:27:28.921584 #13429]  INFO -- default-ubuntu-1804: [32m  is listening on port 80[0m
+I, [2019-04-02T07:27:28.933577 #13429]  INFO -- default-ubuntu-1804: [32m  has a running service of nginx[0m
+I, [2019-04-02T07:27:28.934603 #13429]  INFO -- default-ubuntu-1804: 
+I, [2019-04-02T07:27:28.934642 #13429]  INFO -- default-ubuntu-1804: Finished in 0.07884 seconds (files took 0.32968 seconds to load)
+I, [2019-04-02T07:27:28.934663 #13429]  INFO -- default-ubuntu-1804: [32m2 examples, 0 failures[0m
+I, [2019-04-02T07:27:28.935091 #13429]  INFO -- default-ubuntu-1804: 
+I, [2019-04-02T07:27:28.951420 #13429]  INFO -- default-ubuntu-1804: Finished verifying <default-ubuntu-1804> (0m2.15s).

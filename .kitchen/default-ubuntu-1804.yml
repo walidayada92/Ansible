@@ -1,0 +1,9 @@
+---
+username: kitchen
+ssh_key: "/home/ec2-user/Ansible/.kitchen/docker_id_rsa"
+image_id: 2037a5bd711f
+container_id: 3c44ccce13a55291e1cb0be9ca8d0221221426d42b7958bf25123097b1ecbf44
+hostname: localhost
+port: 32781
+last_action: verify
+last_error:

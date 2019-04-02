@@ -4,10 +4,10 @@
   yum:
            name:  nginx
            state: present
-#- name: Start Nginx service
-#  service:
-#     name: nginx
-#     state: started
+- name: Start Nginx service
+  service:
+     name: nginx
+     state: started
 #- name: Check command with lenting
 #  command: "/bin/echo just testing"
 
