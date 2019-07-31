@@ -1,0 +1,63 @@
+---
+# JDK is downloaded from Oracle repository, a username and password values should be added in case the source is stored on a private repo.
+# The .bash_profile is a template (found under template folder) and it resolved the ENV dependent values from the hosts file used.
+
+- name: Create the JDK Dir
+  become: yes
+  become_user: root
+  file:
+     path: "{{item.root_dir}}"
+     state: directory
+     owner: "{{item.functional_user}}"
+     mode: 0775
+  with_items:
+         - "{{java_props}}"
+  when: "item.machine in inventory_hostname"
+
+
+- name: Copy JDK Source archive
+  copy:
+    src: "{{sources_path}}/{{item.jdk_source}}"
+    dest: /tmp
+  ignore_errors: "{{ ansible_check_mode }}"
+  with_items:
+         - "{{java_props}}"
+  when: "item.machine in inventory_hostname"
+
+- name: Extarct JDK
+  become: yes
+  become_user: "{{item.functional_user}}"
+  unarchive:
+    src: "/tmp/{{item.jdk_source}}"
+    dest: "{{item.root_dir}}"
+    remote_src: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+  with_items:
+         - "{{java_props}}"
+  when: "item.machine in inventory_hostname"
+
+- name: Append JAVA environment variables .
+  become: yes
+  become_user: root
+  blockinfile:
+    path: "{{item.functional_user_home}}/.bash_profile"
+    block: |
+      #Java
+        export JAVA_HOME={{item.root_dir}}/{{item.jdk_handle}}
+        export PATH=$PATH:$HOME/.local/bin:$HOME/bin:{{item.root_dir}}/{{item.jdk_handle}}/bin
+    marker: "# {mark} ANSIBLE MANAGED BLOCK Adding JAVA_HOME to PATH "
+  ignore_errors: "{{ ansible_check_mode }}"
+  with_items:
+         - "{{java_props}}"
+  when: "item.machine in inventory_hostname"
+
+  #- name:  source .bash_profile
+  #shell: . "{{java_props.functional_user_home}}/.bash_profile"
+
+- name: delete JDK source file
+  file:
+      path: "/tmp/{{item.jdk_source}}"
+      state: absent
+  with_items:
+         - "{{java_props}}"
+  when: "item.machine in inventory_hostname"
