@@ -1,0 +1,122 @@
+---
+- name: Check if Pre-Quisites PKGs installed
+  become: yes
+  yum:
+     name: "{{ item }}"
+     state: installed
+  register: prereq
+  with_items:
+     - "{{nrpe_pakages}}"
+  
+
+- name: Install Pre-Quisites PKGs'
+  become: yes
+  yum:
+    name: "{{ item }}"
+    state:  latest
+  with_items:
+     - "{{nrpe_pakages}}"
+  when: not prereq
+  
+#Copy the nrpe.cfg to Destination of remote host 
+- name: debug
+  debug:  
+           msg: "cfg_file={{item.cfg_file}} }}"
+  with_items:
+          - "{{installation_props}}"
+            # loop: "{{ query('inventory_hostnames', '{{nrpe_group}}') }}"
+  when: "item.machine in inventory_hostname"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+
+- name: deploy nrpe.cfg SBUS
+  template:
+      src: "{{item.cfg_file}}"
+      dest: "/etc/nagios/nrpe.cfg"
+  register: "deploy_nrpe_inventory_hostname"
+  with_items:
+          - "{{installation_props}}"
+  when: "item.machine in inventory_hostname"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+  
+  #- name: deploy nrpe.cfg etop
+  #template:
+  #    src: "etop.cfg"
+  #    dest: "{{installation_props.config_file_path}}/nrpe.cfg"
+  #register: "deploy_nrpe_inventory_hostname"
+  #when: "'etop' in inventory_hostname"
+
+  #- name: deploy nrpe.cfg jumpdb
+  #template:
+  #    src: "jumpdb.cfg"
+  #    dest: "{{installation_props.config_file_path}}/nrpe.cfg"
+  #register: "deploy_nrpe_inventory_hostname"
+  #when: "'jumpdb' in inventory_hostname"
+  #loop: "{{ query('inventory_hostnames', '{{nrpe_group}}') }}"
+  #with_items:
+  #        - "{{nrpe_group}}"
+
+#Edit /etc/sysconfig/nrpe to disable SSL
+
+- name: disable SSL OPT
+  template:
+      src: nrpe
+      dest: "/etc/sysconfig"
+
+      #- name: Copy extra plugins to /tmp
+      #copy:
+      #   src: ~/nagios-nrpe-plugins.zip
+      #   dest: /tmp
+
+- name: extract extra plugins to nrpe plugins folder
+  copy:
+          src: "{{sources_path}}/"
+          dest: "{{nrpe_plugins_path}}"
+          #remote_src: yes
+          mode: 0755
+          #- name: fix permissions
+          #file: 
+          # path: "{{installation_props.nrpe_plugins_path}}"
+          #  mode: 0755
+- name: make nrpe user in sudoers
+  become: true
+  blockinfile:
+          path: /etc/sudoers
+          block: |
+                  nrpe            ALL=(ALL)       NOPASSWD: ALL
+                  nagios          ALL=(ALL)       NOPASSWD: ALL
+          marker: "# {mark} ANSIBLE MANAGED BLOCK Adding nrpe as sudoer"
+
+- name: Set SElinux to permissive
+  selinux:
+            policy: targeted
+            state: permissive
+
+- name: Adding nrpe/nagios user to SBUS functional  groups
+  user: 
+          name: "{{item}}"
+          groups: "mqm,{{env_name}}_aaw"
+          # append: yes
+  with_items:
+          - nrpe
+          - nagios
+  when: "'sbus' in inventory_hostname"
+- name: Adding nrpe/nagios user to etop functional  groups
+  user:
+          name: "{{item}}"
+          groups: mqm,prpc
+          #    append: yes
+  with_items:
+          - nrpe
+          - nagios
+  when: "'etop' in inventory_hostname"
+#Restart the NRPE Service  and enable it
+
+- name: start/restart and enable nrpe
+  systemd:
+       name: nrpe
+       state: restarted
+       enabled: yes
+       #when: "deploy_nrpe_inventory_hostname.changed"
+
